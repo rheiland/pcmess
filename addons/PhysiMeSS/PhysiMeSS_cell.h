@@ -13,7 +13,11 @@ class PhysiMeSS_Cell : public PhysiMeSS_Agent
     
     int stuck_counter;
     int unstuck_counter;
-    
+
+    // Strongest fibre contact damping coefficient seen this mechanics step.
+    // Applied once (not once per fibre) in physimess_update_cell_velocity.
+    double fibre_contact_damping;
+
     PhysiMeSS_Cell();
     ~PhysiMeSS_Cell() {};
     

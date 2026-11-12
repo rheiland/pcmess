@@ -71,6 +71,10 @@ void physimess_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double d
 
     }
 
+    if (!isFibre(pCell)) {
+        static_cast<PhysiMeSS_Cell*>(pCell)->fibre_contact_damping = 0.0;
+    }
+
     // std::cout << " AGENT " << pCell->type_name << " " << pCell->ID << " has " ;
     //add potentials between pCell and its neighbors
     for (auto* neighbor : static_cast<PhysiMeSS_Agent*>(pCell)->physimess_neighbors)
@@ -112,8 +116,14 @@ void physimess_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double d
     // std::cout << std::endl;
 
     if (!isFibre(pCell)) {
-        
+
         PhysiMeSS_Cell* ppCell = static_cast<PhysiMeSS_Cell*>(pCell);
+
+        // Fibre contact damping, applied once using the strongest fibre contact
+        if (ppCell->fibre_contact_damping > 0.0) {
+            const std::vector<double> previous_velocity = pCell->get_previous_velocity();
+            naxpy(&(pCell->velocity), ppCell->fibre_contact_damping, previous_velocity);
+        }
         int stuck_threshold = 10;
         int unstuck_threshold = 1;
 
